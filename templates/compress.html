@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Image Compression — DIP MultiTool{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-tag">Image Compression</div>
+  <h1 class="page-title">Compress <span>Your Image</span></h1>
+  <p class="page-desc">Lossless PNG optimization — reduce file size without any visual quality loss.</p>
+</div>
+
+<div class="two-col">
+
+  <!-- LEFT: FORM -->
+  <div>
+    <form method="POST" enctype="multipart/form-data">
+
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="card-title">Input Image</div>
+
+        <div class="drop-zone">
+          <input type="file" name="image" accept="image/*" required>
+          <span class="drop-icon">⚡</span>
+          <div class="drop-label">Drop image here or <strong>click to browse</strong></div>
+          <div class="drop-hint">PNG, JPG, BMP supported</div>
+        </div>
+
+        {% if input_image %}
+        <div class="preview-box" style="margin-top:1rem;">
+          <span class="preview-label">ORIGINAL</span>
+          <img src="/{{ input_image }}" alt="Original image">
+        </div>
+        {% else %}
+        <div class="preview-box" id="live-preview" style="margin-top:1rem; display:none;">
+          <span class="preview-label">PREVIEW</span>
+          <img id="input-preview-img" src="" alt="Preview">
+        </div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;">
+        <span class="btn-text">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 8 22 12 18 12"/><path d="M3.27 11A9 9 0 1121 12"/><path d="M15 7l-3-3-3 3"/><line x1="12" y1="4" x2="12" y2="13"/></svg>
+          Compress Image
+        </span>
+        <span class="spinner"></span>
+      </button>
+
+    </form>
+  </div>
+
+  <!-- RIGHT: OUTPUT -->
+  <div>
+    {% if output %}
+    <div class="card">
+      <div class="card-title">Compression Result</div>
+
+      {% if saved_percent and saved_percent > 0 %}
+      <div class="stats-row">
+        <div class="stat-pill">
+          <span class="val">{{ original_size }} KB</span>
+          <span class="lbl">Original Size</span>
+        </div>
+        <div class="stat-pill">
+          <span class="val">{{ compressed_size }} KB</span>
+          <span class="lbl">Compressed</span>
+        </div>
+        <div class="stat-pill green">
+          <span class="val">-{{ saved_percent }}%</span>
+          <span class="lbl">Saved</span>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- progress bar -->
+      {% if saved_percent %}
+      <div style="margin: 0.75rem 0 1.25rem; background:var(--surface); border-radius:99px; height:6px; overflow:hidden; border:1px solid var(--border);">
+        <div style="height:100%; width:{{ saved_percent }}%; background:linear-gradient(90deg, var(--accent), var(--green)); border-radius:99px; transition:width 1s ease;"></div>
+      </div>
+      {% endif %}
+
+      <div class="preview-box">
+        <span class="preview-label">COMPRESSED</span>
+        <img src="/{{ output }}" alt="Compressed image">
+      </div>
+
+      <div class="btn-row">
+        <a href="/download?path={{ output }}" class="btn btn-green" download>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download Compressed
+        </a>
+      </div>
+    </div>
+
+    {% else %}
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:300px; text-align:center; opacity:0.5;">
+      <div style="font-size:3rem; margin-bottom:1rem;">⚡</div>
+      <div style="font-family:var(--mono); font-size:0.8rem; color:var(--muted);">Compressed output will appear here</div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

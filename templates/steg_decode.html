@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Decode Message — DIP MultiTool{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-tag">Steganography</div>
+  <h1 class="page-title">Decode <span>Hidden Message</span></h1>
+  <p class="page-desc">Upload a steganography-encoded image to extract the hidden message embedded in its pixels.</p>
+</div>
+
+<div class="two-col">
+
+  <!-- LEFT: FORM -->
+  <div>
+    <form method="POST" enctype="multipart/form-data">
+
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="card-title">Encoded Image</div>
+
+        <div class="drop-zone">
+          <input type="file" name="image" accept="image/*" required>
+          <span class="drop-icon">🖼️</span>
+          <div class="drop-label">Drop encoded image or <strong>click to browse</strong></div>
+          <div class="drop-hint">Must be encoded with this tool</div>
+        </div>
+
+        {% if input_image %}
+        <div class="preview-box" style="margin-top:1rem;">
+          <span class="preview-label">INPUT</span>
+          <img src="/{{ input_image }}" alt="Input image">
+        </div>
+        {% else %}
+        <div class="preview-box" id="live-preview" style="margin-top:1rem; display:none;">
+          <span class="preview-label">PREVIEW</span>
+          <img id="input-preview-img" src="" alt="Preview">
+        </div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;">
+        <span class="btn-text">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><line x1="8" y1="15" x2="16" y2="15"/></svg>
+          Decode Message
+        </span>
+        <span class="spinner"></span>
+      </button>
+
+    </form>
+  </div>
+
+  <!-- RIGHT: OUTPUT -->
+  <div>
+    {% if message %}
+    <div class="card">
+      <div class="card-title">Extracted Message</div>
+
+      {% if message == "No hidden message found" %}
+      <div style="text-align:center; padding:2rem; opacity:0.6;">
+        <div style="font-size:2.5rem; margin-bottom:0.75rem;">🔍</div>
+        <div style="font-family:var(--mono); font-size:0.85rem; color:var(--muted);">No hidden message was found in this image.</div>
+      </div>
+      {% else %}
+      <div class="alert alert-info" style="margin-bottom:1rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+        Hidden message successfully extracted.
+      </div>
+
+      <div class="message-output" id="decoded-message">{{ message }}</div>
+
+      <div class="btn-row">
+        <button class="copy-btn" data-target="decoded-message" style="position:static; background:transparent;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy
+        </button>
+      </div>
+      {% endif %}
+    </div>
+
+    {% else %}
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:300px; text-align:center; opacity:0.5;">
+      <div style="font-size:3rem; margin-bottom:1rem;">🔓</div>
+      <div style="font-family:var(--mono); font-size:0.8rem; color:var(--muted);">Decoded message will appear here</div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

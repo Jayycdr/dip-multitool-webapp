@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% block title %}OCR Tool — DIP MultiTool{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-tag">Optical Character Recognition</div>
+  <h1 class="page-title">Extract <span>Text from Image</span></h1>
+  <p class="page-desc">Powered by EasyOCR — deep learning OCR that works on printed, handwritten, and scene text with confidence scoring.</p>
+</div>
+
+<div class="two-col">
+
+  <!-- LEFT: FORM -->
+  <div>
+    <form method="POST" enctype="multipart/form-data">
+
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="card-title">Source Image</div>
+
+        <div class="drop-zone">
+          <input type="file" name="image" accept="image/*" required>
+          <span class="drop-icon">📄</span>
+          <div class="drop-label">Drop image here or <strong>click to browse</strong></div>
+          <div class="drop-hint">Supports printed, handwritten & scene text</div>
+        </div>
+
+        {% if input_image %}
+        <div class="preview-box" style="margin-top:1rem;">
+          <span class="preview-label">INPUT</span>
+          <img src="/{{ input_image }}" alt="Input image">
+        </div>
+        {% else %}
+        <div class="preview-box" id="live-preview" style="margin-top:1rem; display:none;">
+          <span class="preview-label">PREVIEW</span>
+          <img id="input-preview-img" src="" alt="Preview">
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="card-title">Language Settings</div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label">OCR Language</label>
+          <div class="lang-grid">
+            <label class="lang-option">
+              <input type="radio" name="lang" value="en" checked>
+              <span>🇬🇧 English</span>
+            </label>
+            <label class="lang-option">
+              <input type="radio" name="lang" value="hi">
+              <span>🇮🇳 Hindi</span>
+            </label>
+            <label class="lang-option">
+              <input type="radio" name="lang" value="en,hi">
+              <span>🌐 English + Hindi</span>
+            </label>
+            <label class="lang-option">
+              <input type="radio" name="lang" value="fr">
+              <span>🇫🇷 French</span>
+            </label>
+            <label class="lang-option">
+              <input type="radio" name="lang" value="de">
+              <span>🇩🇪 German</span>
+            </label>
+            <label class="lang-option">
+              <input type="radio" name="lang" value="zh">
+              <span>🇨🇳 Chinese</span>
+            </label>
+          </div>
+          <div style="font-family:var(--mono); font-size:0.68rem; color:var(--muted); margin-top:0.6rem;">
+            ⚡ First run downloads the model for each new language (~100–200 MB).
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;">
+        <span class="btn-text">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Extract Text
+        </span>
+        <span class="spinner"></span>
+      </button>
+
+    </form>
+  </div>
+
+  <!-- RIGHT: OUTPUT -->
+  <div>
+    {% if text is not none %}
+
+      {% if text.strip() %}
+      <!-- Stats row -->
+      <div class="stats-row" style="margin-bottom:1rem;">
+        <div class="stat-pill">
+          <span class="val">{{ text.split()|length }}</span>
+          <span class="lbl">Words</span>
+        </div>
+        <div class="stat-pill">
+          <span class="val">{{ text|length }}</span>
+          <span class="lbl">Characters</span>
+        </div>
+        <div class="stat-pill">
+          <span class="val">{{ detections|length }}</span>
+          <span class="lbl">Detections</span>
+        </div>
+        {% if detections %}
+        <div class="stat-pill green">
+          <span class="val">{{ (detections | map(attribute=1) | sum / detections|length) | round(1) }}%</span>
+          <span class="lbl">Avg Confidence</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Plain text output with copy -->
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="card-title">Full Text Output</div>
+        <div style="position:relative;">
+          <div class="ocr-output" id="ocr-result">{{ text }}</div>
+          <button class="copy-btn" data-target="ocr-result">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <!-- Detections with confidence -->
+      {% if detections %}
+      <div class="card">
+        <div class="card-title">Per-Detection Breakdown</div>
+        <div class="detections-list">
+          {% for det_text, conf in detections %}
+          <div class="detection-row">
+            <span class="detection-text">{{ det_text }}</span>
+            <span class="conf-badge {% if conf >= 80 %}conf-high{% elif conf >= 50 %}conf-mid{% else %}conf-low{% endif %}">
+              {{ conf }}%
+            </span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% else %}
+      <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:220px; text-align:center;">
+        <div style="font-size:2.5rem; margin-bottom:0.75rem;">🔍</div>
+        <div style="font-family:var(--mono); font-size:0.85rem; color:var(--muted);">No text could be detected.<br>Try a clearer image with higher contrast text.</div>
+      </div>
+      {% endif %}
+
+    {% else %}
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:300px; text-align:center; opacity:0.5;">
+      <div style="font-size:3rem; margin-bottom:1rem;">📄</div>
+      <div style="font-family:var(--mono); font-size:0.8rem; color:var(--muted);">Extracted text will appear here</div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<style>
+  .lang-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .lang-option { cursor: pointer; }
+
+  .lang-option input[type="radio"] { display: none; }
+
+  .lang-option span {
+    display: block;
+    padding: 0.5rem 0.6rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: center;
+    transition: all 0.2s;
+    background: var(--surface);
+  }
+
+  .lang-option:hover span {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .lang-option input[type="radio"]:checked + span {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.08);
+    color: var(--accent);
+    box-shadow: 0 0 10px rgba(0,229,255,0.12);
+  }
+
+  .detections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .detection-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.55rem 0.75rem;
+    background: var(--surface);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+  }
+
+  .detection-text {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text);
+  }
+
+  .conf-badge {
+    font-size: 0.7rem;
+    font-family: var(--mono);
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .conf-high { background: rgba(0,255,136,0.12); color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+  .conf-mid  { background: rgba(0,229,255,0.10); color: var(--accent); border: 1px solid rgba(0,229,255,0.2); }
+  .conf-low  { background: rgba(255,68,102,0.10); color: var(--red);   border: 1px solid rgba(255,68,102,0.2); }
+
+  @media (max-width: 500px) {
+    .lang-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+{% endblock %}

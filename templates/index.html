@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}DIP MultiTool — Digital Image Processing Suite{% endblock %}
+
+{% block content %}
+<div class="page-header" style="text-align:center; max-width:640px; margin:0 auto 3.5rem;">
+  <div class="page-tag" style="justify-content:center;">Digital Image Processing</div>
+  <h1 class="page-title">One Suite.<br><span>Four Powerful Tools.</span></h1>
+  <p class="page-desc">Steganography, OCR, and compression — all running locally in your browser pipeline. No uploads to third-party servers.</p>
+</div>
+
+<div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1rem;">
+
+  <a href="/encode" style="text-decoration:none;">
+    <div class="card tool-card" style="cursor:pointer;">
+      <div style="font-size:2.2rem; margin-bottom:1rem;">🔒</div>
+      <div style="font-family:var(--mono); font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:0.4rem;">01 — Steganography</div>
+      <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">Encode Message</h2>
+      <p style="font-family:var(--mono); font-size:0.8rem; color:var(--muted); line-height:1.6;">Hide secret text inside an image using LSB pixel manipulation. Output is a visually identical PNG.</p>
+      <div style="margin-top:1.25rem; font-family:var(--mono); font-size:0.72rem; color:var(--accent); display:flex; align-items:center; gap:6px;">
+        Open tool <span>→</span>
+      </div>
+    </div>
+  </a>
+
+  <a href="/decode" style="text-decoration:none;">
+    <div class="card tool-card" style="cursor:pointer;">
+      <div style="font-size:2.2rem; margin-bottom:1rem;">🔓</div>
+      <div style="font-family:var(--mono); font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:0.4rem;">02 — Steganography</div>
+      <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">Decode Message</h2>
+      <p style="font-family:var(--mono); font-size:0.8rem; color:var(--muted); line-height:1.6;">Extract hidden messages from encoded images. Supports images encoded with this tool.</p>
+      <div style="margin-top:1.25rem; font-family:var(--mono); font-size:0.72rem; color:var(--accent); display:flex; align-items:center; gap:6px;">
+        Open tool <span>→</span>
+      </div>
+    </div>
+  </a>
+
+  <a href="/ocr" style="text-decoration:none;">
+    <div class="card tool-card" style="cursor:pointer;">
+      <div style="font-size:2.2rem; margin-bottom:1rem;">📄</div>
+      <div style="font-family:var(--mono); font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:0.4rem;">03 — OCR</div>
+      <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">Text Extraction</h2>
+      <p style="font-family:var(--mono); font-size:0.8rem; color:var(--muted); line-height:1.6;">Extract readable text from images using Tesseract OCR. Supports printed and typed text in images.</p>
+      <div style="margin-top:1.25rem; font-family:var(--mono); font-size:0.72rem; color:var(--accent); display:flex; align-items:center; gap:6px;">
+        Open tool <span>→</span>
+      </div>
+    </div>
+  </a>
+
+  <a href="/compress" style="text-decoration:none;">
+    <div class="card tool-card" style="cursor:pointer;">
+      <div style="font-size:2.2rem; margin-bottom:1rem;">⚡</div>
+      <div style="font-family:var(--mono); font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:0.4rem;">04 — Compression</div>
+      <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:0.5rem;">Image Compression</h2>
+      <p style="font-family:var(--mono); font-size:0.8rem; color:var(--muted); line-height:1.6;">Optimize image file sizes using lossless PNG compression. See before/after size stats instantly.</p>
+      <div style="margin-top:1.25rem; font-family:var(--mono); font-size:0.72rem; color:var(--accent); display:flex; align-items:center; gap:6px;">
+        Open tool <span>→</span>
+      </div>
+    </div>
+  </a>
+
+</div>
+
+<style>
+  .tool-card {
+    height: 100%;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  }
+  .tool-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0,229,255,0.3);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+
+  @media (max-width: 560px) {
+    div[style*="grid-template-columns: repeat(2"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+{% endblock %}
