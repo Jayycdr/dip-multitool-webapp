@@ -1,6 +1,6 @@
 # ocr.py — Replit-safe OCR using doctr (pure Python, no system Tesseract needed)
 # Install: pip install python-doctr[torch]
-
+#
 _model = None
 
 def get_model():
